@@ -3,19 +3,43 @@
 	import { onMount } from 'svelte';
 
 	let canvas;
+	let initPos = { x: 0, y: 0 },
+		finalPos = { x: 0, y: 0 };
+
+	export let activeMode;
 
 	onMount(() => {
 		let canv = new fabric.Canvas(canvas);
+		function getMouseCoords(event) {
+			var pointer = canv.getPointer(event.e);
+			var posX = pointer.x;
+			var posY = pointer.y;
+			return { x: posX, y: posY };
+		}
 
-		const rect = new fabric.Rect({
-			left: 10,
-			top: 10,
-			width: 20,
-			height: 15,
-			fill: 'blue'
+		canv.on('mouse:down', function (options) {
+			initPos = getMouseCoords(options);
 		});
-		canv.add(rect);
+
+		canv.on('mouse:up', function (options) {
+			finalPos = getMouseCoords(options);
+
+			// TODO: group text in the middle of the rectangle
+			// TODO: add border-radius to rectangle
+			let newRect = new fabric.Rect({
+				left: initPos.x,
+				top: initPos.y,
+				width: finalPos.x - initPos.x,
+				height: finalPos.y - initPos.y,
+				fill: 'red'
+			});
+			if (activeMode === 'Geometry') canv.add(newRect);
+
+			// TODO: add line mode
+			// TODO: attach the line with the rectangle
+		});
 	});
 </script>
 
-<canvas bind:this={canvas} width="500" height="300" />
+<canvas bind:this={canvas} width="500" height="300" style="border: 1px solid black;" />
+<p>{activeMode}</p>

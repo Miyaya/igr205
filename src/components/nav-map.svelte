@@ -5,11 +5,12 @@
 		{ id: 2, mode: 'Link' },
 		{ id: 3, mode: 'Move' }
 	];
+	export let changeMode;
 </script>
 
 <div class="navbar">
 	{#each divItems as item, index (item.id)}
-		<span class="navbar-item">
+		<span class="navbar-item" on:click={() => changeMode(item.mode)}>
 			{item.mode}
 		</span>
 	{/each}

@@ -2,9 +2,12 @@
 	import NavMap from '../../components/nav-map.svelte';
 	import Container from '../../components/container.svelte';
 	import ViewMindMap from '../../components/view-mind-map.svelte';
+
+	let activeMode = 'Geometry';
+	const changeMode = (v) => (activeMode = v);
 </script>
 
-<NavMap />
+<NavMap {changeMode} />
 <Container>
-	<ViewMindMap />
+	<ViewMindMap {activeMode} />
 </Container>

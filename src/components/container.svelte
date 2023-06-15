@@ -4,9 +4,8 @@
 
 <style>
 	.container {
-		padding: 8px 25px;
-		/* padding-top: 10px; */
+		padding: 0;
 		position: relative;
-		border: 1px solid black;
+		/* border: 1px solid black; */
 	}
 </style>
