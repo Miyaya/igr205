@@ -10,6 +10,7 @@ import { useState } from "react";
 import MindMap from "./MindMap";
 import Outline from "./Outline";
 import content from "../../res/content.json"
+import Container from "./../Container"
 
 import "./../../App.css";
 
@@ -19,7 +20,7 @@ function Home() {
   const [currTopic, setCurrTopic] = useState(1);
 
   return (
-    <div className="App">
+    <Container>
       <OutlineContext.Provider value={{ outline, currTopic, setCurrTopic }}>
         <SplitPane className="split-pane-row">
           <SplitPaneLeft>
@@ -32,7 +33,7 @@ function Home() {
           <SplitPaneRight><Outline/></SplitPaneRight>
         </SplitPane>
       </OutlineContext.Provider>
-    </div>
+    </Container>
   );
 }
 

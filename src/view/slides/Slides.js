@@ -6,7 +6,7 @@ import SlideIndex from "./SlideIndex";
 import content from "../../res/content.json"
 import PresenterNote from "./PresenterNote";
 import OutlineContext from "../../model/OutlineContext";
-import ModeNav from "./ModeNav";
+import Container from "./../Container"
 
 
 import "./../../App.css";
@@ -15,15 +15,9 @@ const outline = content.topics
 
 function Slides() {
   const [currTopic, setCurrTopic] = useState(1);
-  const [mode, setMode] = useState('select');
-
-  const handleModeChange = (newMode) => {
-    setMode(newMode);
-  };
 
   return (
-    <div className="App">
-      <ModeNav onModeChange={handleModeChange} />
+    <Container>
       {/* <p>Current mode: {mode}</p> */}
       <OutlineContext.Provider value={{ outline, currTopic, setCurrTopic }}>
         <SplitPaneSlides className="split-pane-row">
@@ -47,7 +41,7 @@ function Slides() {
 
         </SplitPaneSlides>
       </OutlineContext.Provider>
-    </div>
+    </Container>
   );
 }
 
