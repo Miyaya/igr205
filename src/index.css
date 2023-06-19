@@ -48,13 +48,11 @@ body {
 
 .split-pane-right {
   background-color: #fff;
-  background-image: linear-gradient(
-      90deg,
+  background-image: linear-gradient(90deg,
       transparent 79px,
       #abced4 79px,
       #abced4 81px,
-      transparent 81px
-    ),
+      transparent 81px),
     linear-gradient(#eee 0.1em, transparent 0.1em);
   background-size: 100% 1.2em;
 }
@@ -98,7 +96,7 @@ ul a:hover {
 blockquote {
   border-left: 10px solid #ccc;
   margin: 5.5em 0 0 0;
-  quotes: "\201C""\201D""\2018""\2019";
+  quotes: "\201C" "\201D" "\2018" "\2019";
   padding: 2rem 0 1rem;
 }
 
@@ -132,4 +130,16 @@ blockquote p {
 
 .quote span {
   font-weight: bold;
+}
+
+.thumbnail {
+  border: 1px solid black;
+  padding: 4px;
+}
+
+.slide-container {
+  border: 1px solid black;
+  margin: 10px;
+  height: 80%;
+  width: 80%;
 }

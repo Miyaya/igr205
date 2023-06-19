@@ -1,17 +1,12 @@
 
 import { useState } from "react";
-import SplitPane, {
-  Divider,
-  SplitPaneBottom,
-  SplitPaneLeft,
-  SplitPaneRight,
-  SplitPaneTop,
-} from "../SplitPane";
+import SplitPaneSlides, { Divider, SplitPaneBottom, SplitPaneSlide, SplitPaneThumbnail, SplitPaneMain, } from "./SplitPaneSlides";
 import Slide from "./Slide";
 import SlideIndex from "./SlideIndex";
 import content from "../../res/content.json"
 import PresenterNote from "./PresenterNote";
 import OutlineContext from "../../model/OutlineContext";
+import ModeNav from "./ModeNav";
 
 
 import "./../../App.css";
@@ -20,22 +15,37 @@ const outline = content.topics
 
 function Slides() {
   const [currTopic, setCurrTopic] = useState(1);
+  const [mode, setMode] = useState('select');
+
+  const handleModeChange = (newMode) => {
+    setMode(newMode);
+  };
 
   return (
     <div className="App">
+      <ModeNav onModeChange={handleModeChange} />
+      {/* <p>Current mode: {mode}</p> */}
       <OutlineContext.Provider value={{ outline, currTopic, setCurrTopic }}>
-        <SplitPane className="split-pane-row">
-          <SplitPaneRight><SlideIndex/></SplitPaneRight>
-          <Divider className="separator-col" />
-          <SplitPaneLeft>
-            <SplitPane className="split-pane-col">
-              <SplitPaneTop><Slide/></SplitPaneTop>
-              <Divider className="separator-row" />
-              <SplitPaneBottom><PresenterNote/></SplitPaneBottom>
-            </SplitPane>
-          </SplitPaneLeft>
+        <SplitPaneSlides className="split-pane-row">
+          <SplitPaneThumbnail>
+            <SlideIndex />
+          </SplitPaneThumbnail>
 
-        </SplitPane>
+          <Divider className="separator-col" />
+          <SplitPaneSlide>
+            <SplitPaneSlides className="">
+              <SplitPaneMain>
+                <Slide />
+              </SplitPaneMain>
+              <Divider className="separator-row" />
+
+              <SplitPaneBottom>
+                <PresenterNote />
+              </SplitPaneBottom>
+            </SplitPaneSlides>
+          </SplitPaneSlide>
+
+        </SplitPaneSlides>
       </OutlineContext.Provider>
     </div>
   );
