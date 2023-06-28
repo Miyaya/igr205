@@ -7,7 +7,8 @@
 			"images": [],
 			"note": "The greatest glory in living lies not in never falling, but in rising every time we fall.",
 			"previousSlide": 0,
-			"nextSlide": 0
+			"x": 100,
+			"y": 0
 		},
 		{
 			"id": 2,
@@ -15,8 +16,9 @@
 			"text": "This is some text that appears on the slide",
 			"images": [],
 			"note": "This is my presenter note",
-			"previousSlide": 0,
-			"nextSlide": 0
+			"previousSlide": 1,
+			"x": 100,
+			"y": 100
 		},
 		{
 			"id": 3,
@@ -24,8 +26,10 @@
 			"text": "Orange text",
 			"images": [],
 			"note": "This is orange presenter note",
-			"previousSlide": 0,
-			"nextSlide": 0
+			"previousSlide": 1,
+			"x": 200,
+			"y": 200
+
 		},
 		{
 			"id": 4,
@@ -33,8 +37,9 @@
 			"text": "What is a computer?",
 			"images": [],
 			"note": "Computer is ...",
-			"previousSlide": 0,
-			"nextSlide": 0
+			"previousSlide": 2,
+			"x": 100,
+			"y": 300
 		}
 	]
 }

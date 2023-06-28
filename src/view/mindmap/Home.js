@@ -7,10 +7,10 @@ import SplitPane, {
 } from "../SplitPane";
 import OutlineContext from "../../model/OutlineContext";
 import { useState } from "react";
-import MindMap from "./MindMap";
 import Outline from "./Outline";
 import content from "../../res/content.json"
 import Container from "./../Container"
+import DnDFlow from './MindMap';
 
 import "./../../App.css";
 
@@ -20,20 +20,14 @@ function Home() {
   const [currTopic, setCurrTopic] = useState(1);
 
   return (
-    <Container>
-      <OutlineContext.Provider value={{ outline, currTopic, setCurrTopic }}>
-        <SplitPane className="split-pane-row">
-          <SplitPaneLeft>
-            <SplitPane className="split-pane-col">
-              <SplitPaneTop><MindMap/></SplitPaneTop>
-            </SplitPane>
-          </SplitPaneLeft>
-          <Divider className="separator-col" />
+    <div>
+      <h1>Mindmap Tool</h1>
+      <div style={{ height: 600 }}>
+      <DnDFlow />
+      </div>
+    </div>
 
-          <SplitPaneRight><Outline/></SplitPaneRight>
-        </SplitPane>
-      </OutlineContext.Provider>
-    </Container>
+    
   );
 }
 
