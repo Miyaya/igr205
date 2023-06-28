@@ -38,7 +38,21 @@ const initialEdges = outline.map((topic) => {
     
 });
 
-const transformSelector = (state) => state.transform;
+var outlinemd = [];
+var text = "";
+var nodetext = "";
+//put each node label in the outlnie markdown text
+initialNodes.forEach((node) => {
+    outlinemd.push("# "+node.data.label+"\n");
+    outlinemd.push("## "+node.data.text+"\n");
+    outlinemd.push(node.data.note+"\n");
+    outlinemd.push("\n");
+});
+outlinemd.forEach((node) => {
+    text += node;
+});
+
+nodetext = text;
 
 let id = initialNodes.length ;
 const getId = () => `dndnode_${id++}`;
@@ -53,8 +67,10 @@ const DnDFlow = () => {
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
 
-  let [nodeName, setNodeName] = useState("Topic1\nTopic2\nTopic3\nTopic4");
   
+  let [nodeName, setNodeName] = useState("outline");
+  let [nodetext, setPostContent] = useState(text);
+
 const onDragStart = (event, nodeType) => {
     event.dataTransfer.setData('application/reactflow', nodeType);
     event.dataTransfer.effectAllowed = 'move';
@@ -62,14 +78,18 @@ const onDragStart = (event, nodeType) => {
 
 
   const onNodeClick = (event, node) => {
-        nodeName = node.data.label+"\n";
+        nodeName = node.data.label;
+        nodetext = "## "+node.data.text+"\n"+node.data.note+"\n";
         setNodeName(nodeName);
+        setPostContent(nodetext);
         nodeid = node.id;
 };
 
 const onPaneClick = (event) => {
-        nodeName = "\>Topic1\n<Topic2\n<Topic3\n<Topic4";
+        nodeName = "outline";
+        nodetext = text;
         setNodeName(nodeName);
+        setPostContent(nodetext);
         nodeid = null;
 };
 
@@ -89,6 +109,10 @@ const onPaneClick = (event) => {
       })
     );
   }, [nodeName, setNodes]);
+
+  useEffect(() => {
+    setPostContent(nodetext);
+  }, [nodetext, setPostContent]);
 
   const onConnect = useCallback((params) => setEdges((eds) => addEdge(params, eds)), []);
 
@@ -125,6 +149,28 @@ const onPaneClick = (event) => {
     },
     [reactFlowInstance]
   );
+  
+  const savenodes = () => {
+    const data = {
+        topics: nodes.map((node) => {
+            return {
+                id: node.id,
+                title: node.data.label,
+                text: node.data.text,
+                note: node.data.note,
+                x: node.position.x,
+                y: node.position.y,
+                previousSlide: node.data.previousSlide,
+            };
+        }),
+    };
+    //
+    
+};
+
+    
+   
+
 
   return (
     <div className="dndflow">
@@ -150,7 +196,9 @@ const onPaneClick = (event) => {
           </ReactFlow>
         </div>
         <aside>
-            <textarea style={{ height: 550 }} value={nodeName} onChange={(evt) => setNodeName(evt.target.value)}/>
+            <input style={{ width:250 }} value={nodeName} onChange={(evt) => setNodeName(evt.target.value)}/>
+            <textarea style={{ height: 500, width:250 }}  value={nodetext} onChange={e => setPostContent(e.target.value)}    />
+            <button onClick={savenodes}>Save</button>
         </aside>
       </ReactFlowProvider>
     </div>
