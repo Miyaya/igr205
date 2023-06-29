@@ -13,6 +13,8 @@ import 'reactflow/dist/style.css';
 import content from "../../res/content.json"
 
 import Markdown from 'react-markdown'
+import { List, arrayMove } from 'react-movable';
+
 
 import './index.css';
 
@@ -69,7 +71,7 @@ const DnDFlow = () => {
 
   
   let [nodeName, setNodeName] = useState("outline");
-  let [nodetext, setPostContent] = useState(text);
+  let [nodetext, setNodeContent] = useState(text);
 
 const onDragStart = (event, nodeType) => {
     event.dataTransfer.setData('application/reactflow', nodeType);
@@ -79,9 +81,16 @@ const onDragStart = (event, nodeType) => {
 
   const onNodeClick = (event, node) => {
         nodeName = node.data.label;
-        nodetext = "## "+node.data.text+"\n"+node.data.note+"\n";
+        console.log(node.data.text);
+        if(node.data.text == undefined){
+            node.data.text = "Type your text here";
+        }
+        if(node.data.note == undefined){
+            node.data.note = "Type your note here";
+        }
+        nodetext = "## "+node.data.text.replace(/[\n]/g, "")+"\n"+node.data.note;
         setNodeName(nodeName);
-        setPostContent(nodetext);
+        setNodeContent(nodetext);
         nodeid = node.id;
 };
 
@@ -89,10 +98,18 @@ const onPaneClick = (event) => {
         nodeName = "outline";
         nodetext = text;
         setNodeName(nodeName);
-        setPostContent(nodetext);
+        setNodeContent(nodetext);
         nodeid = null;
 };
+//itms contain nodes id and  labels
+ var itms = [];
+ nodes && nodes.map((node) => {
+    itms.push(node.data.label);
+    itms.push(node.id);
+});
 
+//use only labels in the list
+const [items, setItems] = React.useState(itms.filter((item, index) => index % 2 === 0));
   useEffect(() => {
     setNodes((nds) =>
       nds.map((node) => {
@@ -103,16 +120,77 @@ const onPaneClick = (event) => {
             ...node.data,
             label: nodeName,
           };
+          // change the label of the node in the itms
+          var index = itms.indexOf(node.id);
+          itms[index-1] = nodeName;
+          setItems(itms.filter((item, index) => index % 2 === 0));
+          
+
         }
 
         return node;
+      
+
       })
     );
+    
+    text = "";
+    outlinemd = [];
+    nodes.forEach((node) => {
+      outlinemd.push("# "+node.data.label+"\n");
+      outlinemd.push("## "+node.data.text+"\n");
+      outlinemd.push(node.data.note+"\n");
+      outlinemd.push("\n");
+    }
+    );
+    outlinemd.forEach((node) => {
+      text += node;
+    }
+    );
+    console.log(text);
   }, [nodeName, setNodes]);
-
   useEffect(() => {
-    setPostContent(nodetext);
-  }, [nodetext, setPostContent]);
+    setNodes((nds) =>
+      nds.map((node) => {
+        if (node.id === nodeid) {
+          // it's important that you create a new object here
+          // in order to notify react flow about the change
+          node.data = {
+            ...node.data,
+            //get the text after the second # in the markdown text, and before the first \n,then remove ## from the text
+            text: nodetext.substring(nodetext.indexOf("#")+3,nodetext.indexOf("\n")).replace(/[\n]/g, ""),
+            //get the text after the first \n in the markdown text
+            note: nodetext.substring(nodetext.indexOf("\n")+1),
+
+
+          };
+         
+
+        }
+
+        return node;
+      
+        
+
+      })
+    );
+    
+    text = "";
+    outlinemd = [];
+    nodes.forEach((node) => {
+      outlinemd.push("# "+node.data.label+"\n");
+      outlinemd.push("## "+node.data.text+"\n");
+      outlinemd.push(node.data.note+"\n");
+      outlinemd.push("\n");
+    }
+    );
+    outlinemd.forEach((node) => {
+      text += node;
+    }
+    );
+  }, [nodetext, setNodes]);
+
+ 
 
   const onConnect = useCallback((params) => setEdges((eds) => addEdge(params, eds)), []);
 
@@ -146,6 +224,7 @@ const onPaneClick = (event) => {
       };
 
       setNodes((nds) => nds.concat(newNode));
+      setItems((itms) => itms.concat(newNode.data.label));
     },
     [reactFlowInstance]
   );
@@ -164,7 +243,17 @@ const onPaneClick = (event) => {
             };
         }),
     };
-    //
+    console.log(data);
+    //save to json file
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([JSON.stringify(data)], { type: 'text/plain' }));
+    a.setAttribute('download', 'outline.json');
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    
+
+
     
 };
 
@@ -195,9 +284,18 @@ const onPaneClick = (event) => {
             <Background />
           </ReactFlow>
         </div>
+        <List
+      values={items}
+      onChange={({ oldIndex, newIndex }) =>
+        setItems(arrayMove(items, oldIndex, newIndex))
+      }
+      renderList={({ children, props }) => <ul {...props}>{children}</ul>}
+      renderItem={({ value, props }) => <li {...props}>{value}</li>}
+    />
         <aside>
+        
             <input style={{ width:250 }} value={nodeName} onChange={(evt) => setNodeName(evt.target.value)}/>
-            <textarea style={{ height: 500, width:250 }}  value={nodetext} onChange={e => setPostContent(e.target.value)}    />
+            <textarea style={{ height: 500, width:250 }}  value={nodetext} onChange={(evt) => setNodeContent(evt.target.value)}   />
             <button onClick={savenodes}>Save</button>
         </aside>
       </ReactFlowProvider>
