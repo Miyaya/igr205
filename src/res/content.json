@@ -1,45 +1,118 @@
 {
-	"topics": [
-		{
-			"id": 1,
-			"title": "Nelson Mandela",
-			"text": "Nelson Mandela is a greatest leader",
-			"images": [],
-			"note": "The greatest glory in living lies not in never falling, but in rising every time we fall.",
-			"previousSlide": 0,
-			"x": 100,
-			"y": 0
-		},
-		{
-			"id": 2,
-			"title": "Title 2",
-			"text": "This is some text that appears on the slide",
-			"images": [],
-			"note": "This is my presenter note",
-			"previousSlide": 1,
-			"x": 100,
-			"y": 100
-		},
-		{
-			"id": 3,
-			"title": "Title Orange",
-			"text": "Orange text",
-			"images": [],
-			"note": "This is orange presenter note",
-			"previousSlide": 1,
-			"x": 200,
-			"y": 200
-
-		},
-		{
-			"id": 4,
-			"title": "Title Computer",
-			"text": "What is a computer?",
-			"images": [],
-			"note": "Computer is ...",
-			"previousSlide": 2,
-			"x": 100,
-			"y": 300
-		}
-	]
+  "topics": [
+    {
+      "id": 1,
+      "title": "Nelson Mandela",
+      "text": "Nelson Mandela is a greatest leader",
+      "note": "The greatest glory in living lies not in never falling, but in rising every time we fall.",
+      "x": 100,
+      "y": 0,
+      "previousSlide": [
+        "0"
+      ],
+      "images": [],
+      "index": 2
+    },
+    {
+      "id": 3,
+      "title": "Title Orange",
+      "text": "Orange text",
+      "note": "This is orange presenter note",
+      "x": 380,
+      "y": 103,
+      "previousSlide": [
+        "1"
+      ],
+      "images": [],
+      "index": 1
+    },
+    {
+      "id": 4,
+      "title": "Title Computer",
+      "text": "What is a computer?",
+      "note": "Computer is ...",
+      "x": 132,
+      "y": 325,
+      "previousSlide": [
+        "2",
+        "dndnode_0",
+        "6"
+      ],
+      "images": [],
+      "index": 0
+    },
+    {
+      "id": 5,
+      "title": "Leaders",
+      "text": "Nelson Mandela..",
+      "note": "## Nelson Mandela is a greatest leader\nThe greatest glory in living lies not in never falling, but in rising every time we fall.\n\n# Title 2\n## This is some text that appears on the slide\nThis is my presenter note\n\n# Title Orange\n## Orange text\nThis is orange presenter note\n\n# Title Computer\n## What is a computer?\nComputer is ...\n\n# Topic 4..\n## \n\n\n# Topic 0 \n## \n\n\n# Topic 0 \n## \n\n\n# Topic 7 \n## \n\n\n# Topic 0 \n## \n\n\n# Topic 8 \n## \n\n\n# Topic 9 \n## \n\n\n",
+      "x": 389,
+      "y": 290.403125,
+      "previousSlide": [
+        "6",
+        "3"
+      ],
+      "images": [],
+      "index": 4
+    },
+    {
+      "id": 6,
+      "title": "Quotes",
+      "text": "Text to show on slide",
+      "note": "\nThis is the log text that will be used as presenter notes. Typing this helps users to record content related to the topic while organizing thoughts.",
+      "x": 158,
+      "y": 164.546875,
+      "previousSlide": [
+        "1"
+      ],
+      "images": [],
+      "index": 3
+    },
+    {
+      "id": 7,
+      "title": "Topic 7 ",
+      "text": "",
+      "note": "",
+      "x": 180,
+      "y": 448.546875,
+      "previousSlide": [],
+      "images": [],
+      "index": 7
+    },
+    {
+      "id": 8,
+      "title": "Topic 6 ",
+      "text": "",
+      "note": "",
+      "x": 402,
+      "y": 388.546875,
+      "previousSlide": [
+        "5"
+      ],
+      "images": [],
+      "index": 6
+    },
+    {
+      "id": 9,
+      "title": "Topic 5 ",
+      "text": "",
+      "note": "",
+      "x": 621,
+      "y": 210.546875,
+      "previousSlide": [],
+      "images": [],
+      "index": 5
+    },
+    {
+      "id": 10,
+      "title": "Topic 8 ",
+      "text": "",
+      "note": "",
+      "x": 415,
+      "y": 476.546875,
+      "previousSlide": [],
+      "images": [],
+      "index": 8
+    }
+  ]
 }

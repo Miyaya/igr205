@@ -1,46 +1,51 @@
 
-import { useState } from "react";
-import SplitPaneSlides, { Divider, SplitPaneBottom, SplitPaneSlide, SplitPaneThumbnail, SplitPaneMain, } from "./SplitPaneSlides";
-import Slide from "./Slide";
+import { useState, useEffect } from "react";
+import SplitPane, { Divider, SplitPaneBottom, SplitPaneLeft, SplitPaneRight, SplitPaneTop, } from "../SplitPane";
+import Slide2 from "./Slide";
 import SlideIndex from "./SlideIndex";
-import content from "../../res/content.json"
 import PresenterNote from "./PresenterNote";
 import OutlineContext from "../../model/OutlineContext";
 import Container from "./../Container"
+import {getTopics, updateTopic} from "../../api"
 
 
 import "./../../App.css";
 
-const outline = content.topics
+// const outline = content.topics
 
-function Slides() {
+function Slides(props) {
   const [currTopic, setCurrTopic] = useState(1);
+  const [outline, setOutline] = useState([]);
+
+  useEffect(() => {
+    getTopics(res => setOutline(res.sort((a,b) => a.index - b.index)));
+  }, []);
 
   return (
-    <Container>
+    <Container navigation={props.navigation}>
       {/* <p>Current mode: {mode}</p> */}
-      <OutlineContext.Provider value={{ outline, currTopic, setCurrTopic }}>
-        <SplitPaneSlides className="split-pane-row">
-          <SplitPaneThumbnail>
+      {
+        outline.length > 0 && <OutlineContext.Provider value={{ outline, currTopic, setCurrTopic }}>
+        <SplitPane className="split-pane-row">
+          <SplitPaneLeft>
             <SlideIndex />
-          </SplitPaneThumbnail>
+          </SplitPaneLeft>
 
           <Divider className="separator-col" />
-          <SplitPaneSlide>
-            <SplitPaneSlides className="">
-              <SplitPaneMain>
-                <Slide />
-              </SplitPaneMain>
+          <SplitPaneRight>
+              <SplitPaneTop>
+                <Slide2 />
+              </SplitPaneTop>
               <Divider className="separator-row" />
-
               <SplitPaneBottom>
                 <PresenterNote />
               </SplitPaneBottom>
-            </SplitPaneSlides>
-          </SplitPaneSlide>
+          </SplitPaneRight>
 
-        </SplitPaneSlides>
+        </SplitPane>
       </OutlineContext.Provider>
+      }
+      
     </Container>
   );
 }

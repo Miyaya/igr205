@@ -10,68 +10,103 @@ import ReactFlow, {
   useStore,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
-import content from "../../res/content.json"
-
-import Markdown from 'react-markdown'
 import { List, arrayMove } from 'react-movable';
 
 
 import './index.css';
-
-//read conten json file  and set initial nodes
-const outline = content.topics;
-
-const initialNodes = outline.map((topic) => {
-    return {
-        id: topic.id.toString(),
-        data: { label: topic.title ,text:topic.text,note:topic.note},
-        position: { x: topic.x, y: topic.y },
-        type: 'default',
-    };
-});
-
-const initialEdges = outline.map((topic) => {
-        return {
-            id: 'e'+ topic.previousSlide.toString() + topic.id.toString(),
-            source: topic.previousSlide.toString(),
-            target: topic.id.toString(),
-        };
-    
-    
-});
-
-var outlinemd = [];
-var text = "";
-var nodetext = "";
-//put each node label in the outlnie markdown text
-initialNodes.forEach((node) => {
-    outlinemd.push("# "+node.data.label+"\n");
-    outlinemd.push("## "+node.data.text+"\n");
-    outlinemd.push(node.data.note+"\n");
-    outlinemd.push("\n");
-});
-outlinemd.forEach((node) => {
-    text += node;
-});
-
-nodetext = text;
-
-let id = initialNodes.length ;
-const getId = () => `dndnode_${id++}`;
-var nodeid;
+import {getTopics, updateTopic, addTopic} from "../../api"
 
 
 const DnDFlow = () => {
     
 
+  var outlinemd = [];
+  var text = "";
+  // const outline = props.outline;
+  let [nodeName, setNodeName] = useState("outline");
+  let [nodeid, setNodeid] = useState(0);
+  let [nodetext, setNodeContent] = useState(text);
+  let [outline, setOutline] = useState([]);
+  let [initialNodes, setInitialNodes] = useState([]);
+  let [initialEdges, setInitialEdges] = useState([]);
+  let [orderedNodes, setOrderedNodes] = useState([]);
   const reactFlowWrapper = useRef(null);
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-  const [reactFlowInstance, setReactFlowInstance] = useState(null);
+  let [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  let [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  let [reactFlowInstance, setReactFlowInstance] = useState(null);
+
+
+  function getOutline(initialNodes){
+    initialNodes.forEach((node) => {
+      outlinemd.push("# "+node.data.label+"\n");
+      outlinemd.push("## "+node.data.text+"\n");
+      outlinemd.push(node.data.note+"\n");
+      outlinemd.push("\n");
+    });
+    outlinemd.forEach((node) => {
+      text += node;
+    });
+    return text;
+  }
+
+  useEffect(() => {
+    getTopics(setOutline);
+  }, []);
+  
+  useEffect(() => {
+    outline.sort((a,b) => a.index - b.index);
+    setInitialNodes(outline.map((topic) => {
+      return {
+          id: topic.id.toString(),
+          data: { label: topic.title ,text:topic.text,note:topic.note},
+          position: { x: topic.x, y: topic.y },
+          type: 'default',
+          previousSlide: topic.previousSlide,
+          index: topic.index
+      };
+    }));
+    setNodes(initialNodes.map((node) => {
+      if (node.id === nodeid) {
+        // it's important that you create a new object here
+        // in order to notify react flow about the change
+        node.data = {
+          ...node.data,
+          label: nodeName,
+          
+        };
+      }
+      return node;
+    }));
+  
+
+    text = getOutline(initialNodes)
+    setNodeContent(text)
 
   
-  let [nodeName, setNodeName] = useState("outline");
-  let [nodetext, setNodeContent] = useState(text);
+  }, [outline]);
+  
+  
+  useEffect(() => {
+
+    let initEdges = []
+    outline.forEach((topic) => {
+      topic.previousSlide.forEach((prev)=>{
+        initEdges.push({
+          id: 'e'+ prev.toString() + topic.id.toString(),
+          source: prev.toString(),
+          target: topic.id.toString(),
+        }) ;
+      })
+    })
+  
+    setInitialEdges(initEdges);  
+    setEdges(initialEdges.map((eds) => addEdge([], eds)))
+  }, [outline]);
+
+
+const getId = () => `${initialNodes.length++}`;
+// var nodeid;
+
 
 const onDragStart = (event, nodeType) => {
     event.dataTransfer.setData('application/reactflow', nodeType);
@@ -80,8 +115,7 @@ const onDragStart = (event, nodeType) => {
 
 
   const onNodeClick = (event, node) => {
-        nodeName = node.data.label;
-        console.log(node.data.text);
+        setNodeName(node.data.label)
         if(node.data.text == undefined){
             node.data.text = "Type your text here";
         }
@@ -89,17 +123,16 @@ const onDragStart = (event, nodeType) => {
             node.data.note = "Type your note here";
         }
         nodetext = "## "+node.data.text.replace(/[\n]/g, "")+"\n"+node.data.note;
-        setNodeName(nodeName);
+        // setNodeName(nodeName);
         setNodeContent(nodetext);
-        nodeid = node.id;
+        setNodeid(node.id)
 };
 
 const onPaneClick = (event) => {
-        nodeName = "outline";
-        nodetext = text;
-        setNodeName(nodeName);
-        setNodeContent(nodetext);
-        nodeid = null;
+        setNodeName("outline")
+        setNodeContent(getOutline(initialNodes))
+        // setNodeName(nodeName);
+        setNodeid(null)
 };
 //itms contain nodes id and  labels
  var itms = [];
@@ -147,8 +180,9 @@ const [items, setItems] = React.useState(itms.filter((item, index) => index % 2 
       text += node;
     }
     );
-    console.log(text);
   }, [nodeName, setNodes]);
+
+
   useEffect(() => {
     setNodes((nds) =>
       nds.map((node) => {
@@ -161,17 +195,9 @@ const [items, setItems] = React.useState(itms.filter((item, index) => index % 2 
             text: nodetext.substring(nodetext.indexOf("#")+3,nodetext.indexOf("\n")).replace(/[\n]/g, ""),
             //get the text after the first \n in the markdown text
             note: nodetext.substring(nodetext.indexOf("\n")+1),
-
-
           };
-         
-
         }
-
         return node;
-      
-        
-
       })
     );
     
@@ -190,7 +216,6 @@ const [items, setItems] = React.useState(itms.filter((item, index) => index % 2 
     );
   }, [nodetext, setNodes]);
 
- 
 
   const onConnect = useCallback((params) => setEdges((eds) => addEdge(params, eds)), []);
 
@@ -216,11 +241,14 @@ const [items, setItems] = React.useState(itms.filter((item, index) => index % 2 
         x: event.clientX - reactFlowBounds.left,
         y: event.clientY - reactFlowBounds.top,
       });
+      let id = getId()
       const newNode = {
-        id: getId(),
+        id: `dndnode_${id}`,
         type,
         position,
         data: { label: `Topic ${id} ` },
+        index: id,
+        previousSlide: []
       };
 
       setNodes((nds) => nds.concat(newNode));
@@ -230,31 +258,44 @@ const [items, setItems] = React.useState(itms.filter((item, index) => index % 2 
   );
   
   const savenodes = () => {
-    const data = {
-        topics: nodes.map((node) => {
-            return {
-                id: node.id,
-                title: node.data.label,
-                text: node.data.text,
-                note: node.data.note,
-                x: node.position.x,
-                y: node.position.y,
-                previousSlide: node.data.previousSlide,
-            };
-        }),
-    };
-    console.log(data);
-    //save to json file
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(new Blob([JSON.stringify(data)], { type: 'text/plain' }));
-    a.setAttribute('download', 'outline.json');
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    
+    let index = 0
+    const data = nodes.map((node) => {
+      let previousSlides = []
+        edges.forEach(edge => {
+          if(Number(edge.target) == Number(node.id)){
+            previousSlides.push(edge.source)
+          }
+         });
+        return {
+            "id": Number(node.id),
+            "title": node.data.label ? node.data.label : "",
+            "text": node.data.text ? node.data.text : "",
+            "note": node.data.note ? node.data.note : "",
+            "x": node.position.x,
+            "y": node.position.y,
+            "previousSlide": previousSlides,
+            "images": [],
+            "index": index++
+        };
+    });
 
+   
+   
 
-    
+    data.forEach(topic=>{
+      let isNew = true;
+      outline.forEach(original_topic=>{
+        if (topic.id == original_topic.id) isNew = false
+      })
+      if(isNew){
+        addTopic(topic, (result)=>{/*console.log("POST RESULT : ",result)*/})
+      }else{
+        updateTopic(topic.id, topic, (result)=>{/*console.log("PUT RESULT : ",result)*/})
+      }
+    })
+
+    getTopics(setOutline);
+
 };
 
     
@@ -285,9 +326,17 @@ const [items, setItems] = React.useState(itms.filter((item, index) => index % 2 
           </ReactFlow>
         </div>
         <List
-      values={items}
+      // values={items}
+
+      values={nodes.map((node)=>node.data.label)}
       onChange={({ oldIndex, newIndex }) =>
-        setItems(arrayMove(items, oldIndex, newIndex))
+        {
+          // setItems(arrayMove(nodes, oldIndex, newIndex))
+          nodes[oldIndex].index = newIndex
+          nodes[newIndex].index = oldIndex
+          setNodes(arrayMove(nodes, oldIndex, newIndex))
+          
+        }
       }
       renderList={({ children, props }) => <ul {...props}>{children}</ul>}
       renderItem={({ value, props }) => <li {...props}>{value}</li>}

@@ -6,10 +6,19 @@ const Slide = () => {
     const topic = outline.find((el) => el.id === currTopic);
 
     return (
-      <div className="title">
-          <h1>{topic.title}</h1>
-          <blockquote>{topic.text}</blockquote>
-      </div>
+      <div
+      style={{
+        height: "400px",
+        width: "800px",
+        position: "relative",
+        // overflow: "hidden",
+        backgroundColor:"darkslateblue",
+        padding:'5%'
+        
+      }}>
+      <h1 style={{color:"floralwhite"}}>{topic.title}</h1>
+      <h2 style={{color:"floralwhite"}}>{topic.text}</h2>
+    </div>
     );
 };
 

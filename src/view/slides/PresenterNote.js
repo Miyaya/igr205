@@ -6,8 +6,8 @@ const PresenterNote = () => {
     const topic = outline.find((el) => el.id === currTopic);
 
     return (
-      <div className="title">
-        Presenter note <b>topic id</b>: {topic.note}
+      <div>
+        <b>Presenter note</b>: {topic.note}
       </div>
     );
 };

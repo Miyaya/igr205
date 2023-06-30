@@ -1,6 +1,7 @@
 
 import React, { useState } from "react";
-import ModeNav from "./ModeNav";
+import ModeNav from "./MenuBar/ModeNav";
+import {routes} from './../res/constants'
 
 import "./../App.css";
 
@@ -10,6 +11,8 @@ function Container(props) {
 
   const handleModeChange = (newMode) => {
     setMode(newMode);
+    let nav = props.navigation
+    nav.navigate(nav.state.routeName == routes.slides ? routes.home : routes.slides)
   };
 
   return (
